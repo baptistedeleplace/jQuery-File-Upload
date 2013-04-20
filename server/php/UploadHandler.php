@@ -61,6 +61,10 @@ class UploadHandler
                 'Content-Range',
                 'Content-Disposition'
             ),
+            // function called in handle_file_upload(), 
+            // is only parameter is the $file object created in handle_file_upload(),
+            // overwrite and put your server-side actions in it:
+            'callback_function' => function ($file) {},
             // Enable to provide file downloads via GET requests to the PHP script:
             'download_via_php' => false,
             // Defines which files can be displayed inline when downloaded:
@@ -575,6 +579,7 @@ class UploadHandler
         $file->name = $this->get_file_name($name, $type, $index, $content_range);
         $file->size = $this->fix_integer_overflow(intval($size));
         $file->type = $type;
+        if (isset($this->options['callback_function'])) $this->options['callback_function']($file);        
         if ($this->validate($uploaded_file, $file, $error, $index)) {
             $this->handle_form_data($file, $index);
             $upload_dir = $this->get_upload_path();
